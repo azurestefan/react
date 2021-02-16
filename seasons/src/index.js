@@ -12,25 +12,36 @@ import ReactDOM from 'react-dom';
 // };
 
 //class component
-class App extends React.Component {
-    constructor(props) {
+class App extends React.Component {  //Instance of App component created
+    constructor(props) {    //App components 'constructor" function gets called
         super(props); //reference to the parent's(React.component) constructor function
         
-        //THIS IS THE ONLY TIME we do direct assignment. Use setState
-        this.state = {lat: null};
+        //THIS IS THE ONLY TIME we do direct assignment. Initialzed. Use setState
+        this.state = {lat: null, errorMessage: ''};
 
         window.navigator.geolocation.getCurrentPosition(
             position => {
-                this.setState({ lat: position.coords.latitude}); //setState is a function that updates state.
-            }, //success callback: when we get back a result
-            err => console.log(err)//failure callback 
+                this.setState({ lat: position.coords.latitude}); //setState is a function that updates state object.
+            }, //success callback: when we get back a result. React sees we update the state of the component.
+            // After update in state, react calls our render mehtod the second time.
+            err => {
+                this.setState({errorMessage: err.message});
+            }//failure callback 
         );
     }
     
 
     //React says we have to define render!! Is going to be called frequently.
     render() {
-        return <div>Latitude: {this.state.lat}</div>;
+        if(this.state.errorMessage && !this.state.lat) {
+            return <div>Error: {this.state.errorMessage}</div>
+        }
+       
+        if(!this.state.errorMessage && this.state.lat) {
+            return <div>Latitude: {this.state.lat}</div>
+        }
+
+        return <div>Loading!</div>;
     }
 }
 
