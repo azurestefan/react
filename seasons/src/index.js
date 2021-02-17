@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import SeasonDisplay from './SeasonDisplay';
+import Spinner from './Spinner';
 
 //functional component
 // const App = () => {
@@ -13,12 +15,17 @@ import ReactDOM from 'react-dom';
 
 //class component
 class App extends React.Component {  //Instance of App component created
-    constructor(props) {    //App components 'constructor" function gets called
-        super(props); //reference to the parent's(React.component) constructor function
+    // constructor(props) {    //App components 'constructor" function gets called
+    //     super(props); //reference to the parent's(React.component) constructor function
         
-        //THIS IS THE ONLY TIME we do direct assignment. Initialzed. Use setState
-        this.state = {lat: null, errorMessage: ''};
+    //     //THIS IS THE ONLY TIME we do direct assignment. Initialze or updates our state object.
+    //     this.state = {lat: null, errorMessage: ''};
+    // }
 
+    // refactored from constructor above. Babel will build the constructor for you.
+    state = {lat: null, errorMessage: ''};
+
+    componentDidMount() {
         window.navigator.geolocation.getCurrentPosition(
             position => {
                 this.setState({ lat: position.coords.latitude}); //setState is a function that updates state object.
@@ -29,19 +36,29 @@ class App extends React.Component {  //Instance of App component created
             }//failure callback 
         );
     }
-    
 
-    //React says we have to define render!! Is going to be called frequently.
-    render() {
+    componentDidUpdate() {
+        console.log('My comp was re rendered!')
+    }
+    
+    //helper function
+    renderContent() {
         if(this.state.errorMessage && !this.state.lat) {
             return <div>Error: {this.state.errorMessage}</div>
         }
-       
+    
         if(!this.state.errorMessage && this.state.lat) {
-            return <div>Latitude: {this.state.lat}</div>
+            return <SeasonDisplay lat={this.state.lat} /> //state is passed down as a prop down to the child
         }
 
-        return <div>Loading!</div>;
+        return <Spinner message="Please accept location request"/>;
+    }
+    
+
+    //React says we have to define render!! Is going to be called frequently when updating components.
+    //avoid conditionals in render because you might want a property that encompasses all conditions. Create a helper function
+    render() {
+       return <div  className="border red">{this.renderContent()}</div>;
     }
 }
 
