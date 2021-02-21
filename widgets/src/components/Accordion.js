@@ -13,6 +13,8 @@ const Accordion = ({ items }) => {
     }
 
     const renderedItems = items.map((item, index)=> {
+        //expression that decides if active should be added to divs below.
+        //it is active when the index is equal to the activeIndex in state.
         const active = index === activeIndex ? 'active' : '';
 
         return (
