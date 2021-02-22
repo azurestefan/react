@@ -20,11 +20,20 @@ const Search = () => {
             setResults(data.query.search);
         };
 
-        if(term) {
+        if (term && !results.length) {
             search();
-        }
-        
+        } else {
+        //time out for typing in a search. Skip this if it is the first time the component is being rendered.
+            const timeoutId = setTimeout(() => {
+                if(term) {
+                    search();
+                }
+            }, 1000);
 
+            return () => { //useEffect can only return functions
+                clearTimeout(timeoutId); //We use clearTimeout to cancel previous timer.
+            };
+        }
     }, [term]);  //the second argument controls when our code is executed. Empty array, no array, or an array with values
 
     const renderedResults = results.map((result) => {
